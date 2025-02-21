@@ -3,6 +3,7 @@ import { FiHome, FiUsers, FiSettings, FiLogOut, FiMenu, FiX, FiPlus } from "reac
 import { AuthContext } from "./Authentication";
 import useAxiosPublic from "../Hooks/useAxiosPublic";
 import Swal from "sweetalert2";
+import TaskBoard from "./TaskBoard";
 
 
 const Sidebar = () => {
@@ -109,11 +110,7 @@ const Sidebar = () => {
                 {/* modal  */}
 
                 <div>
-                    <div className="flex flex-col items-center justify-center h-screen">
-
-
-
-
+                    <div className="flex flex-col absolute items-center justify-center h-screen">
                         {modalOpen && (
                             <div className="fixed inset-0 flex items-center justify-center bg-[#0000002e]  bg-opacity-50">
                                 <div className="bg-white p-6 rounded-lg shadow-lg lg:w-2/5 md:w-2/5 sm:4/5">
@@ -165,6 +162,11 @@ const Sidebar = () => {
 
 
                 {/* task category  */}
+                <div>
+                   
+                    <TaskBoard></TaskBoard>
+                </div>
+
 
 
 
