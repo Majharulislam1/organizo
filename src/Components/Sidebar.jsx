@@ -4,42 +4,45 @@ import { AuthContext } from "./Authentication";
 import useAxiosPublic from "../Hooks/useAxiosPublic";
 import Swal from "sweetalert2";
 import TaskBoard from "./TaskBoard";
-
+ 
+ 
+ 
 
 const Sidebar = () => {
     const [isOpen, setIsOpen] = useState(false);
     let [modalOpen, setModalOpen] = useState(false)
     const axiosPublic = useAxiosPublic();
     const { user } = useContext(AuthContext);
+    
+   
 
     const handleAddTask = (e) => {
-        e.preventDefault();
+    e.preventDefault();
 
-        const title = e.target.title.value;
-        const description = e.target.description.value;
-        const category = e.target.category.value;
+    const title = e.target.title.value;
+    const description = e.target.description.value;
+    const category = e.target.category.value;
 
-        const task = { title, description, time_stamp: new Date(), category, email: user?.email };
+    const task = { title, description, time_stamp: new Date(), category, email: user?.email };
 
-        axiosPublic.post('/add_task', task)
-            .then(res => {
-                console.log(res);
-                if (res.data.insertedId) {
-                    Swal.fire({
-                        position: "center",
-                        icon: "success",
-                        title: "Successfully Added Task",
-                        showConfirmButton: false,
-                        timer: 2000
-                    });
+    axiosPublic.post('/add_task', task)
+        .then(res => {
+            if (res.data.insertedId) {
+            
+                Swal.fire({
+                    position: "center",
+                    icon: "success",
+                    title: "Successfully Added Task",
+                    showConfirmButton: false,
+                    timer: 2000
+                });
 
-                }
-            })
-
-
-
-
-    }
+                setModalOpen(false);
+            
+            }
+        })
+        
+};
 
     return (
         <div className="flex">
@@ -129,12 +132,10 @@ const Sidebar = () => {
                                                 <label htmlFor="category" className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-400">
                                                     Category
                                                 </label>
-
+                                                 
                                                 <select name="category" id="category" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg   block w-full p-2.5 ">
                                                     <option value={''} disabled>Select Category</option>
-                                                    <option value="To-Do">To-Do</option>
-                                                    <option value="In Process">In Process</option>
-                                                    <option value="Done">Done</option>
+                                                    <option value="TODO">To Do</option>
                                                 </select>
                                             </div>
 
@@ -163,7 +164,7 @@ const Sidebar = () => {
 
                 {/* task category  */}
                 <div>
-                   
+
                     <TaskBoard></TaskBoard>
                 </div>
 

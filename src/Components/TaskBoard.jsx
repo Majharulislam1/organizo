@@ -1,85 +1,103 @@
-import { useContext, useEffect, useState } from "react";
-import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
-import useAxiosPublic from "../Hooks/useAxiosPublic";
-import { AuthContext } from "./Authentication";
+import { useState, useEffect, useContext } from "react";
+import { useQuery, useMutation } from '@tanstack/react-query';
+import { DndProvider, useDrag, useDrop } from "react-dnd";
+import { ItemTypes } from "./ItemTypes";  
+import Column from "./Column";  
+import { AuthContext } from "./Authentication";  
+import useAxiosPublic from "../Hooks/useAxiosPublic";  
+import { HTML5Backend } from "react-dnd-html5-backend";
+
+const COLUMNS = [
+  { id: "TODO", title: "To Do" },
+  { id: "IN_PROGRESS", title: "In Progress" },
+  { id: "DONE", title: "Done" },
+];
 
 const TaskBoard = () => {
-    const [tasks, setTasks] = useState([]);
-    const axiosPublic = useAxiosPublic();
-    const {user} =useContext(AuthContext);
+  const [tasks, setTasks] = useState([]);
+  const axiosPublic = useAxiosPublic();
+  const { user } = useContext(AuthContext);
+  
+ 
+  const { isLoading, data: fetchedTasks = [], refetch } = useQuery({
+    queryKey: ['All_Tasks', user?.email], 
+    queryFn: async () => {
+      if (!user?.email) return [];
+      const res = await axiosPublic.get(`/task/${user?.email}`);
+      return setTasks(res.data);  
+    },
+  });
 
+ 
+  const updateTaskCategory = useMutation({
+    mutationFn: async (updatedTask) => {
+      const res = await axiosPublic.put(`/task/${updatedTask._id}`, updatedTask);  
+      return res.data;   
+    },
+    onSuccess: () => {
+      refetch();   
+    },
+    onError: (error) => {
+      console.error('Error updating task', error);
+    },
+  });
 
-    useEffect(() => {
-        axiosPublic.get(`/task/${user?.email}`)
-            .then((res) => {
+ 
+  const deleteTask = useMutation({
+    mutationFn: async (taskId) => {
+      await axiosPublic.delete(`/task/${taskId}`);
+    },
+    onSuccess: () => {
+      refetch();
+    },
+  });
 
-                setTasks(res.data);
-            })
-    }, [user]);
-
-
-    const handleDragEnd = (result) => {
-        const { destination, source, draggableId } = result;
+  
+  const handleDrop = (item, monitor) => {
+    const taskId = item.id;
+    const newCategory = monitor.getDropResult().id;
     
-        if (!destination) return;  
-        if (destination.droppableId === source.droppableId && destination.index === source.index) return;  
+   
+    if (newCategory === item.category) {
+      const reorderedTasks = tasks.map((task) => 
+        task._id === taskId ? { ...task, category: newCategory } : task
+      );
+      setTasks(reorderedTasks);
+      
+   
+      const updatedTask = reorderedTasks.find((task) => task._id === taskId);
+      updateTaskCategory.mutate(updatedTask);
+    } else {
     
-        const updatedTasks = Array.from(tasks);
-        const task = updatedTasks.find((task) => task._id === draggableId);
-    
-        if (!task) return;
-    
-       
-        updatedTasks.splice(source.index, 1);
-     
-        updatedTasks.splice(destination.index, 0, {
-            ...task,
-            category: destination.droppableId,
-        });
-    
-        setTasks(updatedTasks);
-    };
+      const updatedTasks = tasks.map((task) => 
+        task._id === taskId ? { ...task, category: newCategory } : task
+      );
+      setTasks(updatedTasks);
 
-    return (
-        <DragDropContext onDragEnd={handleDragEnd}>
-            <div className="flex space-x-6 p-5">
-                {["To-Do", "In Progress", "Done"].map((category,index) => (
-                    <Droppable droppableId={category + index} key={category} >
-                        {(provided) => (
-                            <div
-                                className="w-1/3 bg-gray-100 p-4 rounded-md"
-                                {...provided.droppableProps}
-                                ref={provided.innerRef}
-                            >
-                                <h2 className="text-lg font-semibold">{category}</h2>
-                                {tasks
-                                    .filter((task) => task.category === category)
-                                    .map((task, index) => (
-                                        <Draggable key={task._id} draggableId={task._id} index={index}>
-                                            {(provided) => (
-                                                <div
-                                                    className="bg-white p-3 mt-2 rounded-md shadow"
-                                                    ref={provided.innerRef}
-                                                    {...provided.draggableProps}
-                                                    {...provided.dragHandleProps}
-                                                >
-                                                    <h3 className="font-bold">{task.title}</h3>
-                                                    <p className="text-sm">{task.description}</p>
-                                                    <span className="text-xs text-gray-500">
-                                                        {new Date(task.time_stamp).toLocaleString()}
-                                                    </span>
-                                                </div>
-                                            )}
-                                        </Draggable>
-                                    ))}
-                                {provided.placeholder}
-                            </div>
-                        )}
-                    </Droppable>
-                ))}
-            </div>
-        </DragDropContext>
-    );
+      const updatedTask = updatedTasks.find((task) => task._id === taskId);
+      updateTaskCategory.mutate(updatedTask);
+    }
+  };
+
+  if (isLoading) return <div>Loading...</div>;
+
+  return (
+    <DndProvider backend={HTML5Backend}>
+      <div className="p-4">
+        <div className="flex gap-8">
+          {COLUMNS.map((column) => (
+            <Column
+              key={column.id}
+              column={column}
+              tasks={tasks.filter((task) => task.category === column.id)}  
+              deleteTask={deleteTask.mutate}   
+              handleDrop={handleDrop}          
+            />
+          ))}
+        </div>
+      </div>
+    </DndProvider>
+  );
 };
 
 export default TaskBoard;
