@@ -4,51 +4,55 @@ import { AuthContext } from "./Authentication";
 import useAxiosPublic from "../Hooks/useAxiosPublic";
 import Swal from "sweetalert2";
 import TaskBoard from "./TaskBoard";
- 
- 
- 
+import { toast, ToastContainer } from 'react-toastify';
+
+
 
 const Sidebar = () => {
     const [isOpen, setIsOpen] = useState(false);
-    let [modalOpen, setModalOpen] = useState(false)
+    let [modalOpen, setModalOpen] = useState(false);
     const axiosPublic = useAxiosPublic();
     const { user } = useContext(AuthContext);
-    
-   
+
+
 
     const handleAddTask = (e) => {
-    e.preventDefault();
+        e.preventDefault();
 
-    const title = e.target.title.value;
-    const description = e.target.description.value;
-    const category = e.target.category.value;
+        const title = e.target.title.value;
+        const description = e.target.description.value;
+        const category = e.target.category.value;
 
-    const task = { title, description, time_stamp: new Date(), category, email: user?.email };
+        if (title.length < 50) {
+            return toast.error("write At least 50 character..");
+        }
 
-    axiosPublic.post('/add_task', task)
-        .then(res => {
-            if (res.data.insertedId) {
-            
-                Swal.fire({
-                    position: "center",
-                    icon: "success",
-                    title: "Successfully Added Task",
-                    showConfirmButton: false,
-                    timer: 2000
-                });
+        const task = { title, description, time_stamp: new Date(), category, email: user?.email };
 
-                setModalOpen(false);
-            
-            }
-        })
-        
-};
+        axiosPublic.post('/add_task', task)
+            .then(res => {
+                if (res.data.insertedId) {
+
+                    Swal.fire({
+                        position: "center",
+                        icon: "success",
+                        title: "Successfully Added Task",
+                        showConfirmButton: false,
+                        timer: 2000
+                    });
+
+                    setModalOpen(false);
+
+                }
+            })
+
+    };
 
     return (
         <div className="flex">
 
             <button
-                className="md:hidden p-3 fixed top-4 left-4 z-50 bg-gray-800 text-white rounded-md"
+                className="md:hidden p-3 fixed top-4 left-4 z-50 bg-primary text-black rounded-md"
                 onClick={() => setIsOpen(!isOpen)}
             >
                 {isOpen ? <FiX size={24} /> : <FiMenu size={24} />}
@@ -67,22 +71,14 @@ const Sidebar = () => {
 
                     <li className="flex items-center space-x-3 cursor-pointer p-3 rounded-lg hover:bg-gray-700">
                         <FiHome className="text-xl" />
-                        <span>Home</span>
+                        <span className='lg:block md:block sm:hidden'>Home</span>
                         <span className={`${isOpen ? "block" : "hidden"} transition-all`}>Home</span>
                     </li>
-                    <li className="flex items-center space-x-3 cursor-pointer p-3 rounded-lg hover:bg-gray-700">
-                        <FiUsers className="text-xl" />
-                        <span>Accounts</span>
-                        <span className={`${isOpen ? "block" : "hidden"} transition-all`}>Accounts</span>
-                    </li>
-                    <li className="flex items-center space-x-3 cursor-pointer p-3 rounded-lg hover:bg-gray-700">
-                        <FiSettings className="text-xl" />
-                        <span>Settings</span>
-                        <span className={`${isOpen ? "block" : "hidden"} transition-all`}>Settings</span>
-                    </li>
+                    
                     <li className="flex items-center space-x-3 cursor-pointer p-3 rounded-lg hover:bg-gray-700">
                         <FiLogOut className="text-xl" />
-                        <span>LogOut</span>
+                         
+                        <span className='lg:block md:block sm:hidden'>Logout</span>
                         <span className={`${isOpen ? "block" : "hidden"} transition-all`}>Logout</span>
                     </li>
                 </ul>
@@ -91,7 +87,7 @@ const Sidebar = () => {
             {/* Main Content */}
 
 
-            <div className="flex-1 p-10 md:ml-64">
+            <div className="flex-1 p-10 md:ml-64  sm:mt-10">
                 <h2 className="text-xl font-bold">Task</h2>
                 <div className="flex justify-between items-center">
                     <div className="w-3/5">
@@ -132,7 +128,7 @@ const Sidebar = () => {
                                                 <label htmlFor="category" className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-400">
                                                     Category
                                                 </label>
-                                                 
+
                                                 <select name="category" id="category" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg   block w-full p-2.5 ">
                                                     <option value={''} disabled>Select Category</option>
                                                     <option value="TODO">To Do</option>
@@ -170,13 +166,9 @@ const Sidebar = () => {
 
 
 
-
-
-
-
             </div>
 
-
+            <ToastContainer />
         </div>
     );
 };

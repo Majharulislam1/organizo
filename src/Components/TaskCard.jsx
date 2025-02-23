@@ -1,33 +1,36 @@
-import React from "react";
 import { useDrag } from "react-dnd";
-import { ItemTypes } from "./ItemTypes";  
+import { ItemTypes } from "./ItemTypes";
 
-const TaskCard = ({ task, deleteTask }) => {
+const TaskCard = ({ task, deleteTask,updateTask,handleEditTask }) => {
   const [{ isDragging }, drag] = useDrag({
-    type: ItemTypes.TASK,   
-    item: { id: task._id, category: task.category },  
+    type: ItemTypes.TASK,
+    item: { id: task._id, category: task.category },
     collect: (monitor) => ({
-      isDragging: monitor.isDragging(),   
+      isDragging: monitor.isDragging(),
     }),
   });
 
-  const handleDelete = () => {
-    deleteTask(task._id);   
-  };
-
   return (
-    <div
-      ref={drag}  
-      className={`bg-white p-4 rounded-lg cursor-grab shadow-md ${isDragging ? 'opacity-50' : ''}`}
-    >
-      <h3 className="font-semibold">{task.title}</h3>
-      <p>{task.description}</p>
-
-      <div className="mt-4 flex justify-between">
-        <button className="bg-red-500 text-white px-3 py-1 rounded" onClick={handleDelete}>
+    <div ref={drag} className="bg-white p-4 mb-2 rounded-lg shadow cursor-grab">
+      <h3 className="font-medium text-black">{task.title}</h3>
+      <p className="mt-2 text-sm text-black">{task.description.slice(0, 100)}</p>
+      <div className="flex justify-between items-center mt-4">
+        <button
+          onClick={() => deleteTask(task._id)}
+          className="text-sm px-3 py-1 bg-red-500  text-white rounded-full"
+        >
           Delete
         </button>
+
+        <button
+          onClick={() => handleEditTask(task._id)}
+          className="text-sm px-3 py-1 bg-primary  text-black rounded-full"
+        >
+          update
+        </button>
       </div>
+
+
     </div>
   );
 };

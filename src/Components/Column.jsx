@@ -1,24 +1,21 @@
-import { useDrop } from "react-dnd";
-import TaskCard from "./TaskCard";  
-import { ItemTypes } from "./ItemTypes";  
+import { useDrop } from 'react-dnd';
+import { ItemTypes } from "./ItemTypes";
+import TaskCard from "./TaskCard";
 
-const Column = ({ column, tasks, deleteTask, handleDrop }) => {
-  const [{ isOver }, drop] = useDrop({
-    accept: ItemTypes.TASK,  
-    drop: (item) => handleDrop(item, { id: column.id }),  
-    collect: (monitor) => ({
-      isOver: monitor.isOver(),
-    }),
+const Column = ({ column, tasks, deleteTask, handleDrop, updateTask, handleEditTask }) => {
+  const [, drop] = useDrop({
+    accept: ItemTypes.TASK,
+    drop: (item) => handleDrop(item, column.id), // Drop handler that moves task to this column
   });
 
   return (
-    <div ref={drop} className={`w-1/3 ${isOver ? 'bg-gray-200' : 'bg-white'}`}>
-      <h2 className="text-lg font-semibold mb-4">{column.title}</h2>
-      <div className="space-y-4">
+   
+      <div ref={drop} className="bg-gray-100 p-4 rounded-lg lg:w-1/3 md:w-1/3 sm:w-full">
+        <h2 className="text-xl font-semibold mb-4 text-center">{column.title}</h2>
         {tasks.map((task) => (
-          <TaskCard key={task._id} task={task} deleteTask={deleteTask} />
+          <TaskCard key={task._id} task={task} deleteTask={deleteTask} updateTask={updateTask} handleEditTask={handleEditTask} />
         ))}
-      </div>
+       
     </div>
   );
 };
