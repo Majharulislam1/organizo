@@ -64,9 +64,7 @@ const Sidebar = () => {
                 className={`bg-secondary h-screen p-5 pt-8 text-black fixed top-0 lg:left-0 md:left-0    z-40 transition-all duration-300 ease-in-out 
           ${isOpen ? "w-64 left-0" : "w-0 -left-10"} md:w-64`}
             >
-                <h1 className={`text-2xl font-semibold mb-6 transition-all ${isOpen ? "block" : "hidden"}`}>
-                    CRM HUB
-                </h1>
+                
 
                 <ul className="space-y-6">
                     
