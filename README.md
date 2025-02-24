@@ -7,6 +7,8 @@ The application features a clean, minimalistic UI, built with React, Tailwind CS
 
 ---
 
+[Live Link](https://organizo-8b5a2.web.app)
+
 ## 📸 Project Screenshot  
 ![Organizo Screenshot](https://i.ibb.co/Vp9DMPpr/screenshot-11.png)  
 
