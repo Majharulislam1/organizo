@@ -6,6 +6,7 @@ import { AuthContext } from "./Authentication";
 import useAxiosPublic from "../Hooks/useAxiosPublic";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import Swal from "sweetalert2";
+import { toast, ToastContainer } from "react-toastify";
 
 const COLUMNS = [
   { id: "TODO", title: "To Do" },
@@ -81,6 +82,10 @@ const TaskBoard = () => {
     const description = e.target.description.value;
     const category = e.target.category.value;
 
+    if (title.length < 50) {
+                return toast.error("write At least 50 character..");
+       }
+    
 
     updateTask.mutate({
       _id: up_task._id,
@@ -217,7 +222,7 @@ const TaskBoard = () => {
 
 
       </div>
-
+<ToastContainer />
 
     </div>
   );
