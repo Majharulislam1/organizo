@@ -1,7 +1,6 @@
-import { useState, useEffect, useContext } from "react";
+import { useState, useContext } from "react";
 import { useQuery, useMutation } from '@tanstack/react-query';
-import { DndProvider, useDrag, useDrop } from "react-dnd";
-import { ItemTypes } from "./ItemTypes";
+import { DndProvider,} from "react-dnd";
 import Column from "./Column";
 import { AuthContext } from "./Authentication";
 import useAxiosPublic from "../Hooks/useAxiosPublic";

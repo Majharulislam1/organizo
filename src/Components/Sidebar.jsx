@@ -1,10 +1,11 @@
 import { useContext, useState } from "react";
-import { FiHome, FiUsers, FiSettings, FiLogOut, FiMenu, FiX, FiPlus } from "react-icons/fi";
+import { FiHome,  FiLogOut, FiMenu, FiX, FiPlus } from "react-icons/fi";
 import { AuthContext } from "./Authentication";
 import useAxiosPublic from "../Hooks/useAxiosPublic";
 import Swal from "sweetalert2";
 import TaskBoard from "./TaskBoard";
 import { toast, ToastContainer } from 'react-toastify';
+import { NavLink } from "react-router-dom";
 
 
 
@@ -12,7 +13,7 @@ const Sidebar = () => {
     const [isOpen, setIsOpen] = useState(false);
     let [modalOpen, setModalOpen] = useState(false);
     const axiosPublic = useAxiosPublic();
-    const { user } = useContext(AuthContext);
+    const { user,handleLogOut } = useContext(AuthContext);
 
 
 
@@ -68,14 +69,16 @@ const Sidebar = () => {
                 </h1>
 
                 <ul className="space-y-6">
-
-                    <li className="flex items-center space-x-3 cursor-pointer p-3 rounded-lg hover:bg-gray-700">
+                    
+                    <NavLink to={'/'}>
+                    <li className="flex items-center space-x-3 cursor-pointer p-3 rounded-lg hover:bg-primary">
                         <FiHome className="text-xl" />
                         <span className='lg:block md:block sm:hidden'>Home</span>
                         <span className={`${isOpen ? "block" : "hidden"} transition-all`}>Home</span>
                     </li>
+                    </NavLink>
                     
-                    <li className="flex items-center space-x-3 cursor-pointer p-3 rounded-lg hover:bg-gray-700">
+                    <li onClick={handleLogOut} className="flex items-center space-x-3 cursor-pointer p-3 rounded-lg hover:bg-primary">
                         <FiLogOut className="text-xl" />
                          
                         <span className='lg:block md:block sm:hidden'>Logout</span>
