@@ -2,12 +2,12 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_API_KEY,
-  authDomain: import.meta.env.VITE_AUTH_DOMAIN,
-  projectId: import.meta.env.VITE_PROJECT_ID,
-  storageBucket: import.meta.env.VITE_STORAGE_BUCKET,
-  messagingSenderId: import.meta.env.VITE_MESSAGING_SENDER_ID,
-  appId: import.meta.env.VITE_APP_ID
+  apiKey: "AIzaSyD2JamBl5sij2bjW2eWurmEX1doznKaBHg",
+  authDomain: "organizo-8b5a2.firebaseapp.com",
+  projectId: "organizo-8b5a2",
+  storageBucket: "organizo-8b5a2.firebasestorage.app",
+  messagingSenderId: "748821090631",
+  appId: "1:748821090631:web:36964f204b0d39cc3b7c62"
 };
 
  
